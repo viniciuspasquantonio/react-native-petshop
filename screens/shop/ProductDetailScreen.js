@@ -1,7 +1,7 @@
 import React from 'react';
-import {View, Text,Image,Button,StyleSheet} from 'react-native';
+import { View, Text, Image, Button, StyleSheet } from 'react-native';
 import ProductItem from '../../components/shop/ProductItem';
-import {useSelector, useDispatch} from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { ScrollView } from 'react-native-gesture-handler';
 import Colors from '../../constants/Colors';
 import * as cartActions from '../../store/actions/cart';
@@ -14,11 +14,11 @@ const ProductDetailScreen = props => {
 
     return (
         <ScrollView>
-            <Image style={styles.image} source={{uri: selectedProduct.imageUrl}}/>
+            <Image style={styles.image} source={{ uri: selectedProduct.imageUrl }} />
             <View style={styles.actions}>
-                <Button color={Colors.primary} title="Add to Cart" onPress={()=>{
+                <Button color={Colors.primary} title="Add to Cart" onPress={() => {
                     dispatch(cartActions.addToCart(selectedProduct));
-                }}/>
+                }} />
             </View>
             <Text style={styles.price}>${selectedProduct.price.toFixed(2)}</Text>
             <Text style={styles.description}>{selectedProduct.description}</Text>
@@ -33,13 +33,13 @@ ProductDetailScreen.navigationOptions = navData => {
 }
 
 const styles = StyleSheet.create({
-    image:{
+    image: {
         width: '100%',
         height: 300
     },
     price: {
         fontFamily: 'open-sans-bold',
-        fontSize:20,
+        fontSize: 20,
         color: '#888',
         textAlign: 'center',
         marginVertical: 20
@@ -50,7 +50,7 @@ const styles = StyleSheet.create({
         textAlign: 'center',
         marginHorizontal: 20
     },
-    actions:{
+    actions: {
         marginVertical: 10,
         alignItems: 'center'
     }

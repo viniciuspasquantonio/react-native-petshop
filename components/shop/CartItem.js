@@ -7,11 +7,11 @@ const CartItem = props => {
     return (
         <View style={styles.cartItem}>
             <View style={styles.itemData}>
-    <Text style={styles.quantity}>{props.quantity} </Text>
+                <Text style={styles.quantity}>{props.quantity} </Text>
                 <Text style={styles.text}>{props.title}</Text>
             </View>
             <View style={styles.itemData}>
-                <Text style={styles.text}>${props.amount.toFixed(2)}</Text>
+                <Text style={styles.text}>${Math.round((props.amount.toFixed(2) * 100) / 100)}</Text>
                 {props.deletable && <TouchableOpacity onPress={props.onRemove} style={styles.deleteButton}>
                     <Ionicons 
                         name={Platform.OS === 'android' ? 'md-trash':'ios-trash'} 
