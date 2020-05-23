@@ -7,15 +7,41 @@ export const deleteProduct = productId => {
 };
 
 export const createProduct = (title, description, imageUrl, price) => {
-    return {
-        type: CREATE_PRODUCT,
-        productData: {
-            title,
-            description,
-            imageUrl,
-            price
-        }
-    };
+    return async dispatch => {
+        
+        const response = await fetch(
+            'http://10.0.2.2:8080/products', 
+            {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(
+                    {
+                        title,
+                        description,
+                        imageUrl,
+                        price,
+                        user: {id:1}
+                    }
+                )
+            }
+        );
+        const resData = await response.json();
+             
+
+        dispatch({
+            type: CREATE_PRODUCT,
+            productData: {
+                id: resData.id,
+                title,
+                description,
+                imageUrl,
+                price,
+                ownerId: resData.user.id
+            }
+        });
+    }
 };
 
 export const updateProduct = (id, title, description, imageUrl) => {

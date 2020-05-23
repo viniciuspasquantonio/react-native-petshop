@@ -59,7 +59,7 @@ const EditProductScreen = props => {
             Alert.alert('Wrong input!', 'Please check the errors in the form.', [{ text: 'Okay' }]);
             return;
         }
-        console.log(formState.inputValues);
+        
         if (editedProduct) {
             dispatch(productActions.updateProduct(prodId, formState.inputValues.title, formState.inputValues.description, formState.inputValues.imageUrl));
         } else {
