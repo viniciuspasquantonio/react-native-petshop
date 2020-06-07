@@ -11,6 +11,10 @@ import CartScreen from '../screens/shop/CartScreen';
 import OrdersScreen from '../screens/shop/OrdersScreen';
 import UserProductsScreen from '../screens/user/UserProductsScreen';
 import EditProductScreen from '../screens/user/EditProductScreen';
+import AppointmentsOverviewScreen from '../screens/appointment/AppointmentsOverviewScreen';
+import AppointmentsAgendaScreen from '../screens/appointment/AppointmentsAgendaScreen';
+import AppointmentDetailScreen from '../screens/appointment/AppointmentDetailScreen';
+
 
 import Colors from '../constants/Colors';
 
@@ -45,6 +49,24 @@ const ProductsNavigator = createStackNavigator({
     defaultNavigationOptions: defaultNavOptions
 });
 
+const AppointmentsNavigator = createStackNavigator({
+    AppointmentsAgenda: AppointmentsAgendaScreen,
+    AppointmentsOverview: AppointmentsOverviewScreen,
+    AppointmentDetail: AppointmentDetailScreen
+}, {
+    navigationOptions: {
+        drawerIcon: drawerConfig => (
+            <Ionicons
+                name={Platform.OS === 'android' ? 'md-calendar' : 'ios-calendar'}
+                size={23}
+                color={drawerConfig.tintColor}
+            />
+        )
+    },
+    defaultNavigationOptions: defaultNavOptions
+});
+
+
 const OrdersNavigator = createStackNavigator({
     Orders: OrdersScreen
 }, {
@@ -78,6 +100,7 @@ const AdminNavigator = createStackNavigator({
 
 const ShopNavigator = createDrawerNavigator({
     Products: ProductsNavigator,
+    Appointments: AppointmentsNavigator,
     Orders: OrdersNavigator,
     Admin: AdminNavigator
 }, {

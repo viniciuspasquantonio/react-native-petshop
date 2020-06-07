@@ -25,7 +25,7 @@ const PRODUCTS = [
         'Royal Canin',
         10.00
     )
-    
+
 ];
 
 export default PRODUCTS;
