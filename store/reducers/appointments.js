@@ -1,16 +1,13 @@
-import APPOINTMENTS from '../../data/dummy-appointments';
-import { SET_APPOINTMENTS } from '../actions/appointments';
+import { SET_APPOINTMENTS, SET_APPOINTMENT } from '../actions/appointments';
 
 const initialState = {
-    availableAppointments: APPOINTMENTS,
-    userAppointments: APPOINTMENTS
+    userAppointments: []
 };
 
 export default (state = initialState, action) => {
     switch (action.type) {
         case SET_APPOINTMENTS:
             return {
-                availableAppointments: action.appointments,
                 userAppointments: action.appointments
             };
 

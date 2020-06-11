@@ -14,6 +14,8 @@ import EditProductScreen from '../screens/user/EditProductScreen';
 import AppointmentsOverviewScreen from '../screens/appointment/AppointmentsOverviewScreen';
 import AppointmentsAgendaScreen from '../screens/appointment/AppointmentsAgendaScreen';
 import AppointmentDetailScreen from '../screens/appointment/AppointmentDetailScreen';
+import EditAppointmentScreen from '../screens/appointment/EditAppointmentScreen';
+
 
 
 import Colors from '../constants/Colors';
@@ -52,7 +54,8 @@ const ProductsNavigator = createStackNavigator({
 const AppointmentsNavigator = createStackNavigator({
     AppointmentsAgenda: AppointmentsAgendaScreen,
     AppointmentsOverview: AppointmentsOverviewScreen,
-    AppointmentDetail: AppointmentDetailScreen
+    AppointmentDetail: AppointmentDetailScreen,
+    EditAppointment: EditAppointmentScreen
 }, {
     navigationOptions: {
         drawerIcon: drawerConfig => (
@@ -99,8 +102,8 @@ const AdminNavigator = createStackNavigator({
 });
 
 const ShopNavigator = createDrawerNavigator({
-    Products: ProductsNavigator,
     Appointments: AppointmentsNavigator,
+    Products: ProductsNavigator,
     Orders: OrdersNavigator,
     Admin: AdminNavigator
 }, {

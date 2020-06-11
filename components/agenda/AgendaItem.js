@@ -6,7 +6,7 @@ const AgendaItem = props => {
     return (
         <TouchableOpacity
             style={[styles.item, { height: 80 }]}
-            onPress={() => Alert.alert(props.title)}
+            onPress={props.onPress}
         >
             <Text>{props.startTimeHHmm} - {props.endTimeHHmm}</Text>
             <Text>{props.title}</Text>            

@@ -9,6 +9,7 @@ import productsReducer from './store/reducers/products';
 import cartReducer from './store/reducers/cart';
 import ordersReducer from './store/reducers/orders';
 import appointmentsReducer from './store/reducers/appointments';
+import customersReducer from './store/reducers/customers';
 import agendasReducer from './store/reducers/agendas';
 
 import ShopNavigator from './navigation/ShopNavigator';
@@ -19,6 +20,7 @@ const rootReducer = combineReducers({
   orders: ordersReducer,
   appointments: appointmentsReducer,
   agendas: agendasReducer,
+  customers: customersReducer
 });
 
 const store = createStore(rootReducer,applyMiddleware(ReduxThunk));
@@ -29,6 +31,8 @@ const fetchFonts = () =>{
     'open-sans-bold': require('./assets/fonts/OpenSans-Bold.ttf')
   });
 }
+
+
 export default function App() {
   const [fontLoaded,setFontLoaded] = useState(false);
 

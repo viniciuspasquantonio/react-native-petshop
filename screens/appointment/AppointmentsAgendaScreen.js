@@ -6,14 +6,17 @@ import { HeaderButtons, Item } from 'react-navigation-header-buttons';
 import CustomHeaderButton from '../../components/UI/HeaderButton';
 import Colors from '../../constants/Colors';
 import * as agendasActions from '../../store/actions/agendas';
+import * as appointmentsActions from '../../store/actions/appointments';
+
 import AppointmentItem from '../../components/agenda/AgendaItem';
+
 
 
 const AppointmentsAgendaScreen = props => {
     const userId = 29;
+    const today = new Date().toISOString().slice(0, 10);
     const [isLoading, setIsLoading] = useState(false);
     const [isRefreshing, setIsRefreshing] = useState(false);
-    const [items, setItems] = useState();
     const [error, setError] = useState(undefined);
     const agenda = useSelector(state => state.agendas.userAgenda);
     const dispatch = useDispatch();
@@ -23,12 +26,15 @@ const AppointmentsAgendaScreen = props => {
         setIsRefreshing(true);
         try {
             await dispatch(agendasActions.fetchAgenda(userId));
+            await dispatch(appointmentsActions.fetchAppointments());
         } catch (err) {
             console.log("error", error);
             setError(err.message);
         }
         setIsRefreshing(false);
     }, [dispatch, setIsLoading, setError]);
+
+
 
     useEffect(() => {
         const willFocusSub = props.navigation.addListener('willFocus', loadAgenda);
@@ -37,17 +43,27 @@ const AppointmentsAgendaScreen = props => {
         }
     }, [loadAgenda]);
 
-    const loadItems = day => {
+    const selectItemHandler = id => {
+        props.navigation.navigate('EditAppointment', {
+            appointmentId: id
+        });
+    };
+
+    const loadItems = () => {
         loadAgenda(userId);
-        if(agenda && agenda.days){
-            setItems(agenda.days);
-        }
     };
 
     const renderItem = item => {
         console.log("renderItem ");
         return (
-            <AppointmentItem title={item.title} startTimeHHmm={item.startTimeHHmm} endTimeHHmm={item.endTimeHHmm} />
+            <AppointmentItem
+                title={item.title}
+                startTimeHHmm={item.startTimeHHmm}
+                endTimeHHmm={item.endTimeHHmm}
+                onPress={() => {
+                    selectItemHandler(item.appointmentId);
+                }}
+            />
         );
     }
 
@@ -87,12 +103,13 @@ const AppointmentsAgendaScreen = props => {
 
     return (
         <Agenda
-            items={items}
-            onDayPress={loadItems}
-            selected={'2020-06-01'}
+            items={agenda.days}
+            loadItemsForMonth={loadItems}
+            selected={today}
             renderItem={renderItem}
             renderEmptyDate={renderEmptyDate}
             rowHasChanged={rowHasChanged}
+            renderEmptyData={() => { return (<View />); }}
         // markingType={'period'}
         // markedDates={{
         //    '2017-05-08': {textColor: '#43515c'},
