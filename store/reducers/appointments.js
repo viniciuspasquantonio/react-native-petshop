@@ -1,4 +1,6 @@
-import { SET_APPOINTMENTS, SET_APPOINTMENT } from '../actions/appointments';
+import { SET_APPOINTMENTS, SET_APPOINTMENT,DELETE_APPOINTMENT, CREATE_APPOINTMENT, UPDATE_APPOINTMENT } from '../actions/appointments';
+import Appointment from '../../models/appointment/appointment';
+
 
 const initialState = {
     userAppointments: []
@@ -9,6 +11,40 @@ export default (state = initialState, action) => {
         case SET_APPOINTMENTS:
             return {
                 userAppointments: action.appointments
+            };
+        case DELETE_APPOINTMENT:
+            return {
+                ...state,
+                userAppointments: state.userAppointments.filter(appointment => appointment.id != action.appointmentId),
+            };
+        case CREATE_APPOINTMENT:            
+            const newAppointment = new Appointment(
+                action.appointmentData.id,
+                action.appointmentData.startTime,
+                action.appointmentData.endTime,
+                action.appointmentData.customerId,
+                action.appointmentData.price,
+                action.appointmentData.appointmentServices
+            );
+            return {
+                ...state,
+                userAppointments: state.userAppointments.concat(newAppointment)
+            };
+        case UPDATE_APPOINTMENT:            
+            const appointmentIndex = state.userAppointments.findIndex(appointment => appointment.id === action.appointmentId);
+            const updatedAppointment = new Appointment(
+                action.appointmentId,
+                action.appointmentData.startTime,
+                action.appointmentData.endTime,
+                action.appointmentData.customerId,
+                action.appointmentData.price,
+                action.appointmentData.appointmentServices
+            );
+            const updatedUserAppointments = [...state.userAppointments];
+            updatedUserAppointments[appointmentIndex] = updatedAppointment;
+            return {
+                ...state,
+                userAppointments: updatedUserAppointments
             };
 
     }

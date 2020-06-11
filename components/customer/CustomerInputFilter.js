@@ -11,44 +11,47 @@ const KEYS_TO_FILTERS = ['firstName', 'lastName', 'phone'];
 
 
 const CustomerInputFiler = props => {
+    const [searchTerm, setSearchTerm] = useState('');
+    
+
     let TouchableCmp = TouchableOpacity;
     if (Platform.OS === 'android' && Platform.Version >= 21) {
         TouchableCmp = TouchableNativeFeedback;
     }
-    const setCustomerHandler = customer => {
-        setAppointmentCustomer(customer)
-        setSearchInputText(customer.firstName + ' '+ customer.lastName + ' - '+ customer.phone);        
-    }
 
-    const [isRefreshing, setIsRefreshing] = useState(false);
     const dispatch = useDispatch();
     const userId = 29;
     const loadCustomers = useCallback(async () => {
-        setIsRefreshing(true);
         try {
             await dispatch(customersActions.fetchCustomers(userId));
         } catch (err) {
         }
-        setIsRefreshing(false);
-    }, [dispatch, setIsRefreshing]);
+    }, [dispatch]);
 
     const customerSelectHandler = customer => {
-        setSearchInputText(customer.firstName + ' '+ customer.lastName + ' - '+ customer.phone)
-        setSearchTerm('');        
+        setSearchInputText(getSearchInputText(customer));
+        setSearchTerm('');
+        props.customerSelectHandler(customer);
     }
 
-   
+    const getSearchInputText = customer => {
+        if (customer) {
+            return customer.firstName + ' ' + customer.lastName + ' - ' + customer.phone;
+        }
+        return '';
+    }
+
 
     useEffect(() => {
         loadCustomers();
+        
     }, [loadCustomers]);
-    const [searchTerm, setSearchTerm] = useState('');
-    const [appointmentCustomer, setAppointmentCustomer] = useState(props.customer);
-    const [searchInputText, setSearchInputText] = useState('');
+
+    
     const customers = useSelector(state => state.customers.userCustomers);
-
-
-    const filteredList = customers.filter(createFilter(searchTerm, KEYS_TO_FILTERS))
+    let customer = customers.find(customer => customer.id === props.customerId);
+    const [searchInputText, setSearchInputText] = useState(getSearchInputText(customer));    
+    const filteredList = customers.filter(createFilter(searchTerm, KEYS_TO_FILTERS));
     return (
         <View>
             <SearchInput
@@ -62,7 +65,7 @@ const CustomerInputFiler = props => {
                 <ScrollView>
                     {filteredList.map(customer => {
                         return (
-                            <TouchableCmp onPress={() => {customerSelectHandler(customer)}} key={customer.id}>
+                            <TouchableCmp onPress={() => { customerSelectHandler(customer) }} key={customer.id}>
                                 <View >
                                     <Text >{customer.firstName} {customer.lastName} - {customer.phone}</Text>
                                 </View>

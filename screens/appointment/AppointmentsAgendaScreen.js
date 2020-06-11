@@ -54,7 +54,6 @@ const AppointmentsAgendaScreen = props => {
     };
 
     const renderItem = item => {
-        console.log("renderItem ");
         return (
             <AppointmentItem
                 title={item.title}
@@ -68,7 +67,6 @@ const AppointmentsAgendaScreen = props => {
     }
 
     const renderEmptyDate = () => {
-        console.log("renderEmptyDate ");
         return (
             <View style={styles.emptyDate}>
                 <Text>This is empty date!</Text>
@@ -126,6 +124,34 @@ const AppointmentsAgendaScreen = props => {
         // hideExtraDays={false}
         />
     );
+};
+
+AppointmentsAgendaScreen.navigationOptions = navData => {
+    return {
+        headerTitle: 'Your Agenda',
+        headerLeft: () => (
+            <HeaderButtons HeaderButtonComponent={CustomHeaderButton}>
+                <Item
+                    title='Menu'
+                    iconName={Platform.OS === 'android' ? 'md-menu' : 'ios-menu'}
+                    onPress={() => {
+                        navData.navigation.toggleDrawer();
+                    }}
+                />
+            </HeaderButtons>
+        ),
+        headerRight: () => (
+            <HeaderButtons HeaderButtonComponent={CustomHeaderButton}>
+                <Item
+                    title='Menu'
+                    iconName={Platform.OS === 'android' ? 'md-add' : 'ios-create'}
+                    onPress={() => {
+                        navData.navigation.navigate('EditAppointment');
+                    }}
+                />
+            </HeaderButtons>
+        )
+    }
 };
 
 const styles = StyleSheet.create({

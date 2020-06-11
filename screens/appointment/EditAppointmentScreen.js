@@ -1,13 +1,11 @@
 import React, { useState, useEffect, useCallback, useReducer } from 'react';
-import { View, StyleSheet, KeyboardAvoidingView, ScrollView, Platform, Alert, ActivityIndicator } from 'react-native';
+import { View, StyleSheet, KeyboardAvoidingView, Platform, Alert, ActivityIndicator } from 'react-native';
 import { HeaderButtons, Item } from 'react-navigation-header-buttons';
 import CustomHeaderButton from '../../components/UI/HeaderButton';
 import { useSelector, useDispatch } from 'react-redux';
 import * as appointmentsActions from '../../store/actions/appointments'
 import Input from '../../components/UI/Input';
 import Colors from '../../constants/Colors';
-import SearchInput, { createFilter } from 'react-native-search-filter';
-import InputFiler from '../../components/customer/CustomerInputFilter';
 import CustomerInputFiler from '../../components/customer/CustomerInputFilter';
 
 
@@ -40,31 +38,25 @@ const formReducer = (state, action) => {
 const EditAppointmentScreen = props => {
 
     const [isLoading, setIsLoading] = useState(false);
-    const [customer, setCustomer] = useState(props.customer);
-    
-    const [startTime, setStartTime] = useState(props.startTime);
-    const [endTime, setEndTime] = useState(props.endTime);
-    const [mode, setMode] = useState('date');
     const [error, setError] = useState();
-
     const appointmentId = props.navigation.getParam('appointmentId');
     const editedAppointment = useSelector(state =>
         state.appointments.userAppointments.find(appointment => appointment.id === appointmentId)
     );
 
     const dispatch = useDispatch();
-
     const [formState, dispatchFormState] = useReducer(formReducer, {
+        
         inputValues: {
-            title: editedAppointment ? editedAppointment.title : '',
             startTime: editedAppointment ? new Date(editedAppointment.startTime) : '',
             endTime: editedAppointment ? new Date(editedAppointment.endTime) : '',
-            
+            customerId: editedAppointment ? editedAppointment.customerId : ''
+
         },
         inputValidities: {
-            title: editedAppointment ? true : false,
             startTime: editedAppointment ? true : false,
-            endTime: editedAppointment ? true : false
+            endTime: editedAppointment ? true : false,
+            customerId: editedAppointment ? true : false
         },
         formIsValid: editedAppointment ? true : false
     });
@@ -75,14 +67,12 @@ const EditAppointmentScreen = props => {
         }
     }, [error]);
 
-    const customerChangeHandler = customer => {
-        console.log("dooou ")
-        setCustomer(customer);
-        let name = customer.firstName + ' ' + customer.lastName + ' - ' + customer.phone;
-        console.log("name ",name);
+    const customerChangeHandler = selectedCustomer => {
+        inputChangeHandler('customerId', selectedCustomer.id, true);
     }
 
     const submitHandler = useCallback(async () => {
+        console.log("formState",formState);
         if (!formState.formIsValid) {
             Alert.alert('Wrong input!', 'Please check the errors in the form.', [{ text: 'Okay' }]);
             return;
@@ -92,9 +82,26 @@ const EditAppointmentScreen = props => {
         setError(null);
         try {
             if (editedAppointment) {
-                await dispatch(appointmentsActions.updateAppointment(appointmentId, formState.inputValues.title, formState.inputValues.startTime, formState.inputValues.endTime));
+                await dispatch(
+                    appointmentsActions.updateAppointment(
+                        appointmentId,
+                        formState.inputValues.startTime,
+                        formState.inputValues.endTime,
+                        formState.inputValues.customerId,
+                        150,
+                        []
+                    )
+                );
             } else {
-                await dispatch(appointmentsActions.createAppointment(formState.inputValues.title, formState.inputValues.startTime, formState.inputValues.endTime))
+                await dispatch(
+                    appointmentsActions.createAppointment(
+                        formState.inputValues.startTime,
+                        formState.inputValues.endTime,
+                        formState.inputValues.customerId,
+                        150,
+                        []
+                    )
+                );
             }
             props.navigation.goBack();
         } catch (error) {
@@ -103,7 +110,7 @@ const EditAppointmentScreen = props => {
 
         setIsLoading(false);
 
-    }, [dispatch, appointmentId, formState]);
+    }, [dispatch, appointmentId, formState, setIsLoading, setError]);
 
     useEffect(() => {
         props.navigation.setParams({ submit: submitHandler });
@@ -136,47 +143,42 @@ const EditAppointmentScreen = props => {
             behavior='padding'
             keyboardVerticalOffset={100}
         >
-            <ScrollView>
-                <View style={styles.form}>
+            <View style={styles.form}>
 
-                    <CustomerInputFiler
-                        id="customerInput"
-                        customer={editedAppointment ? editedAppointment.customer : ''}
-                        onSelect={customerChangeHandler}
-                        
-                    />
+                <CustomerInputFiler
+                    id="customerId"
+                    customerId={editedAppointment ? editedAppointment.customerId : ''}
+                    customerSelectHandler={customerChangeHandler}
+                />
 
-                   <Input
-                        id="startTime"
-                        label="Start Time"
-                        errorText="Please enter a valid start time!"
-                        keyboardType="default"
-                        autoCapitalize="sentences"
-                        autoCorrect
-                        returnKeyType="next"
-                        onInputChange={inputChangeHandler}
-                        initialValue={editedAppointment ? editedAppointment.startTime : ''}
-                        initiallyValid={!!editedAppointment}
-                        required
-                    />
+                <Input
+                    id="startTime"
+                    label="Start Time"
+                    errorText="Please enter a valid start time!"
+                    keyboardType="default"
+                    autoCapitalize="sentences"
+                    autoCorrect
+                    returnKeyType="next"
+                    onInputChange={inputChangeHandler}
+                    initialValue={editedAppointment ? editedAppointment.startTime : ''}
+                    initiallyValid={!!editedAppointment}
+                    required
+                />
 
-                    <Input
-                        id="endTime"
-                        label="End Time"
-                        errorText="Please enter a valid end time!"
-                        keyboardType="default"
-                        autoCapitalize="sentences"
-                        autoCorrect
-                        returnKeyType="next"
-                        onInputChange={inputChangeHandler}
-                        initialValue={editedAppointment ? editedAppointment.endTime : ''}
-                        initiallyValid={!!editedAppointment}
-                        required
-                    />
-
-
-                </View>
-            </ScrollView>
+                <Input
+                    id="endTime"
+                    label="End Time"
+                    errorText="Please enter a valid end time!"
+                    keyboardType="default"
+                    autoCapitalize="sentences"
+                    autoCorrect
+                    returnKeyType="next"
+                    onInputChange={inputChangeHandler}
+                    initialValue={editedAppointment ? editedAppointment.endTime : ''}
+                    initiallyValid={!!editedAppointment}
+                    required
+                />
+            </View>
         </KeyboardAvoidingView>
     )
 };

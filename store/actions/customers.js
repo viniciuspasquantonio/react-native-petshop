@@ -11,7 +11,6 @@ export const fetchCustomers = userId => {
             }
 
             const resData = await response.json();
-            console.log("resData ",resData);
 
             dispatch({
                 type: SET_CUSTOMERS,
