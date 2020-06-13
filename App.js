@@ -1,6 +1,6 @@
-import React, {useState} from 'react';
+import React, {useState, useCallback} from 'react';
 import {createStore, combineReducers, applyMiddleware} from 'redux';
-import {Provider} from 'react-redux';
+import {Provider, useDispatch} from 'react-redux';
 import {AppLoading} from 'expo';
 import * as Font from 'expo-font';
 import ReduxThunk from 'redux-thunk';
@@ -13,6 +13,7 @@ import customersReducer from './store/reducers/customers';
 import agendasReducer from './store/reducers/agendas';
 
 import ShopNavigator from './navigation/ShopNavigator';
+
 
 const rootReducer = combineReducers({
   products: productsReducer,

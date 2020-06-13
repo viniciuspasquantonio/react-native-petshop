@@ -22,7 +22,7 @@ export default (state = initialState, action) => {
                 action.appointmentData.id,
                 action.appointmentData.startTime,
                 action.appointmentData.endTime,
-                action.appointmentData.customerId,
+                action.appointmentData.customer,
                 action.appointmentData.price,
                 action.appointmentData.appointmentServices
             );
@@ -36,7 +36,7 @@ export default (state = initialState, action) => {
                 action.appointmentId,
                 action.appointmentData.startTime,
                 action.appointmentData.endTime,
-                action.appointmentData.customerId,
+                action.appointmentData.customer,
                 action.appointmentData.price,
                 action.appointmentData.appointmentServices
             );

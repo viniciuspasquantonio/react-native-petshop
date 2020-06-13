@@ -1,9 +1,9 @@
 class Appointment {
-    constructor(id, startTime, endTime, customerId, price, appointmentServices) {
+    constructor(id, startTime, endTime, customer, price, appointmentServices) {
         this.id = id;
         this.startTime = startTime;
         this.endTime = endTime;
-        this.customerId = customerId;
+        this.customer = customer;
         this.price = price;
         this.appointmentServices = appointmentServices;
     }

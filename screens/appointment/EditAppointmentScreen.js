@@ -1,15 +1,12 @@
 import React, { useState, useEffect, useCallback, useReducer } from 'react';
-import { View, StyleSheet, KeyboardAvoidingView, Platform, Alert, ActivityIndicator } from 'react-native';
+import { View, StyleSheet, KeyboardAvoidingView, Platform, Alert, ActivityIndicator, Button } from 'react-native';
 import { HeaderButtons, Item } from 'react-navigation-header-buttons';
 import CustomHeaderButton from '../../components/UI/HeaderButton';
 import { useSelector, useDispatch } from 'react-redux';
 import * as appointmentsActions from '../../store/actions/appointments'
 import Input from '../../components/UI/Input';
 import Colors from '../../constants/Colors';
-import CustomerInputFiler from '../../components/customer/CustomerInputFilter';
-
-
-
+import CustomerSelectorButton from '../../components/customer/CustomerSelectorButton';
 
 const FORM_INPUT_UPDATE = 'FORM_INPUT_UPDATE';
 
@@ -36,7 +33,6 @@ const formReducer = (state, action) => {
     return state;
 };
 const EditAppointmentScreen = props => {
-
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState();
     const appointmentId = props.navigation.getParam('appointmentId');
@@ -44,35 +40,32 @@ const EditAppointmentScreen = props => {
         state.appointments.userAppointments.find(appointment => appointment.id === appointmentId)
     );
 
+    const [selectedCustomer, setSelectedCustomer] = useState(editedAppointment ? editedAppointment.customer : null);
+
     const dispatch = useDispatch();
     const [formState, dispatchFormState] = useReducer(formReducer, {
-        
+
         inputValues: {
             startTime: editedAppointment ? new Date(editedAppointment.startTime) : '',
             endTime: editedAppointment ? new Date(editedAppointment.endTime) : '',
-            customerId: editedAppointment ? editedAppointment.customerId : ''
+            customer: editedAppointment ? editedAppointment.customer : ''
 
         },
         inputValidities: {
             startTime: editedAppointment ? true : false,
             endTime: editedAppointment ? true : false,
-            customerId: editedAppointment ? true : false
+            customer: editedAppointment ? true : false
         },
         formIsValid: editedAppointment ? true : false
     });
 
-    useEffect(() => {
-        if (error) {
-            Alert.alert('An error occurred!', error, [{ text: 'Ok' }]);
-        }
-    }, [error]);
-
     const customerChangeHandler = selectedCustomer => {
-        inputChangeHandler('customerId', selectedCustomer.id, true);
+        inputChangeHandler('customer', selectedCustomer, true);
+        setSelectedCustomer(selectedCustomer);
     }
 
     const submitHandler = useCallback(async () => {
-        console.log("formState",formState);
+        console.log("formState", formState);
         if (!formState.formIsValid) {
             Alert.alert('Wrong input!', 'Please check the errors in the form.', [{ text: 'Okay' }]);
             return;
@@ -87,7 +80,7 @@ const EditAppointmentScreen = props => {
                         appointmentId,
                         formState.inputValues.startTime,
                         formState.inputValues.endTime,
-                        formState.inputValues.customerId,
+                        formState.inputValues.customer,
                         150,
                         []
                     )
@@ -97,7 +90,7 @@ const EditAppointmentScreen = props => {
                     appointmentsActions.createAppointment(
                         formState.inputValues.startTime,
                         formState.inputValues.endTime,
-                        formState.inputValues.customerId,
+                        formState.inputValues.customer,
                         150,
                         []
                     )
@@ -112,9 +105,6 @@ const EditAppointmentScreen = props => {
 
     }, [dispatch, appointmentId, formState, setIsLoading, setError]);
 
-    useEffect(() => {
-        props.navigation.setParams({ submit: submitHandler });
-    }, [submitHandler]);
 
     const inputChangeHandler = useCallback(
         (inputId, inputValue, inputValidity) => {
@@ -128,6 +118,13 @@ const EditAppointmentScreen = props => {
         [dispatchFormState]
     );
 
+
+    useEffect(() => {
+        if (error) {
+            Alert.alert('An error occurred!', error, [{ text: 'Ok' }]);
+        }
+        props.navigation.setParams({ submit: submitHandler });
+    }, [error, submitHandler]);
 
     if (isLoading) {
         return (
@@ -145,11 +142,11 @@ const EditAppointmentScreen = props => {
         >
             <View style={styles.form}>
 
-                <CustomerInputFiler
-                    id="customerId"
-                    customerId={editedAppointment ? editedAppointment.customerId : ''}
+                <CustomerSelectorButton
                     customerSelectHandler={customerChangeHandler}
+                    title={selectedCustomer ? selectedCustomer.displayName : 'Select a customer'}
                 />
+                
 
                 <Input
                     id="startTime"

@@ -24,7 +24,7 @@ export const fetchAppointments = () => {
                     entry.id,
                     entry.startTime,
                     entry.endTime,
-                    entry.customer.id,
+                    entry.customer,
                     entry.price,
                     entry.appointmentServices
                 ));
@@ -58,7 +58,7 @@ export const deleteAppointment = appointmentId => {
     };
 };
 
-export const createAppointment = (startTime, endTime, customerId, price, appointmentServices) => {
+export const createAppointment = (startTime, endTime, customer, price, appointmentServices) => {
     return async dispatch => {
 
         const response = await fetch(
@@ -75,7 +75,7 @@ export const createAppointment = (startTime, endTime, customerId, price, appoint
                         price,
                         appointmentServices,
                         user: { id: 29 },
-                        customer: { id: customerId }
+                        customer
                     }
                 )
             }
@@ -92,13 +92,13 @@ export const createAppointment = (startTime, endTime, customerId, price, appoint
                 price,
                 appointmentServices,
                 userId: 29,
-                customerId 
+                customer 
             }
         });
     }
 };
 
-export const updateAppointment = (id, startTime, endTime, customerId, price, appointmentServices) => {
+export const updateAppointment = (id, startTime, endTime, customer, price, appointmentServices) => {
     return async (dispatch) => {
         const response = await fetch(
             `http://10.0.2.2:8080/appointments/${id}`,
@@ -112,7 +112,7 @@ export const updateAppointment = (id, startTime, endTime, customerId, price, app
                     endTime,
                     price,
                     user: { id: 29 },
-                    customer: { id: customerId },
+                    customer,
                     appointmentServices
                 })
             });
@@ -129,7 +129,7 @@ export const updateAppointment = (id, startTime, endTime, customerId, price, app
                 price,
                 appointmentServices,
                 userId: 29,
-                customerId
+                customer
             }
         });
     };
