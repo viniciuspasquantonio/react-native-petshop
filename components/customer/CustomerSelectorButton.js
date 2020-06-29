@@ -35,6 +35,7 @@ const CustomerSelectorButton = props => {
             <Button
                 title={props.title}
                 onPress={() => setCustomerSearchModalVisible(true)}
+                color={props.color}
             />
             <Modal
                 width={0.7}

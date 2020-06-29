@@ -7,6 +7,7 @@ import * as appointmentsActions from '../../store/actions/appointments'
 import Input from '../../components/UI/Input';
 import Colors from '../../constants/Colors';
 import CustomerSelectorButton from '../../components/customer/CustomerSelectorButton';
+import PetSelectorButton from '../../components/pet/PetSelectorButton';
 
 const FORM_INPUT_UPDATE = 'FORM_INPUT_UPDATE';
 
@@ -41,6 +42,7 @@ const EditAppointmentScreen = props => {
     );
 
     const [selectedCustomer, setSelectedCustomer] = useState(editedAppointment ? editedAppointment.customer : null);
+    const [selectedPet, setSelectedPet] = useState(editedAppointment ? editedAppointment.pet : null);
 
     const dispatch = useDispatch();
     const [formState, dispatchFormState] = useReducer(formReducer, {
@@ -62,6 +64,11 @@ const EditAppointmentScreen = props => {
     const customerChangeHandler = selectedCustomer => {
         inputChangeHandler('customer', selectedCustomer, true);
         setSelectedCustomer(selectedCustomer);
+    }
+
+    const petChangeHandler = selectedPet => {
+        inputChangeHandler('pet', selectedPet, true);
+        setSelectedPet(selectedPet);        
     }
 
     const submitHandler = useCallback(async () => {
@@ -142,11 +149,21 @@ const EditAppointmentScreen = props => {
         >
             <View style={styles.form}>
 
-                <CustomerSelectorButton
-                    customerSelectHandler={customerChangeHandler}
-                    title={selectedCustomer ? selectedCustomer.displayName : 'Select a customer'}
-                />
-                
+                <View style={styles.selectorButton}>
+                    <CustomerSelectorButton
+                        customerSelectHandler={customerChangeHandler}
+                        title={selectedCustomer ? selectedCustomer.displayName : 'Select a customer'}
+                        color={Colors.primary}
+                    />
+                </View>
+                <View style={styles.selectorButton}>
+                    <PetSelectorButton
+                        petSelectHandler={petChangeHandler}
+                        title={selectedPet ? selectedPet.name : 'Select a pet'}
+                        customer={selectedCustomer}
+                        color={Colors.primary}
+                    />
+                </View>
 
                 <Input
                     id="startTime"
@@ -205,7 +222,12 @@ const styles = StyleSheet.create({
         flex: 1,
         alignItems: 'center',
         justifyContent: 'center'
+    },
+    selectorButton: {
+        marginBottom: 10
+
     }
+
 });
 
 export default EditAppointmentScreen;

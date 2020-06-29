@@ -26,9 +26,7 @@ const InputFiler = props => {
                         placeholder={props.placeHolder}
                     />
                 ) : (
-                    <View style={styles.centered}>
-                        <Text>{props.emptyListMessage}</Text>
-                    </View>
+                    props.emptyListComponent                    
                 )
             }
             {searchTerm.length < props.minSearchTermLenth ? null : (
