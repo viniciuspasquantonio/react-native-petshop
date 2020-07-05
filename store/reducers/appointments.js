@@ -23,8 +23,9 @@ export default (state = initialState, action) => {
                 action.appointmentData.startTime,
                 action.appointmentData.endTime,
                 action.appointmentData.customer,
+                action.appointmentData.pet,
                 action.appointmentData.price,
-                action.appointmentData.appointmentServices
+                action.appointmentData.services
             );
             return {
                 ...state,
@@ -37,8 +38,9 @@ export default (state = initialState, action) => {
                 action.appointmentData.startTime,
                 action.appointmentData.endTime,
                 action.appointmentData.customer,
+                action.appointmentData.pet,
                 action.appointmentData.price,
-                action.appointmentData.appointmentServices
+                action.appointmentData.services
             );
             const updatedUserAppointments = [...state.userAppointments];
             updatedUserAppointments[appointmentIndex] = updatedAppointment;

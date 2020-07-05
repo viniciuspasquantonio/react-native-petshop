@@ -8,6 +8,12 @@ import Input from '../../components/UI/Input';
 import Colors from '../../constants/Colors';
 import CustomerSelectorButton from '../../components/customer/CustomerSelectorButton';
 import PetSelectorButton from '../../components/pet/PetSelectorButton';
+import DateTimeButtons from '../../components/DateTimeButtons';
+import ServicesSelectorButton from '../../components/service/ServicesSelectorButton';
+import { Text } from 'react-native';
+
+
+
 
 const FORM_INPUT_UPDATE = 'FORM_INPUT_UPDATE';
 
@@ -33,46 +39,69 @@ const formReducer = (state, action) => {
     }
     return state;
 };
-const EditAppointmentScreen = props => {
+const EditAppointmentScreen = props => {    
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState();
     const appointmentId = props.navigation.getParam('appointmentId');
     const editedAppointment = useSelector(state =>
         state.appointments.userAppointments.find(appointment => appointment.id === appointmentId)
-    );
-
+    );    
+    const services = useSelector(state => state.services.userServices);
+    const [startTime, setStartTime] = useState(editedAppointment ? editedAppointment.startTime : null);
     const [selectedCustomer, setSelectedCustomer] = useState(editedAppointment ? editedAppointment.customer : null);
-    const [selectedPet, setSelectedPet] = useState(editedAppointment ? editedAppointment.pet : null);
+    const [selectedPet, setSelectedPet] = useState(editedAppointment ? editedAppointment.pet : null);    
+    const [selectedServices, setSelectedServices] = useState(editedAppointment ? editedAppointment.services : null);
+    const [price, setPrice] = useState(editedAppointment ? editedAppointment.price : null);
 
     const dispatch = useDispatch();
     const [formState, dispatchFormState] = useReducer(formReducer, {
 
         inputValues: {
-            startTime: editedAppointment ? new Date(editedAppointment.startTime) : '',
-            endTime: editedAppointment ? new Date(editedAppointment.endTime) : '',
-            customer: editedAppointment ? editedAppointment.customer : ''
-
+            startTime: editedAppointment ? editedAppointment.startTime : '',
+            customer: editedAppointment ? editedAppointment.customer : '',
+            pet: editedAppointment ? editedAppointment.pet : '',
+            services: editedAppointment ? editedAppointment.services : ''      
         },
         inputValidities: {
             startTime: editedAppointment ? true : false,
-            endTime: editedAppointment ? true : false,
-            customer: editedAppointment ? true : false
+            customer: editedAppointment ? true : false,
+            pet: editedAppointment ? true : false,
+            services: editedAppointment ? true : false
         },
         formIsValid: editedAppointment ? true : false
     });
 
-    const customerChangeHandler = selectedCustomer => {
-        inputChangeHandler('customer', selectedCustomer, true);
-        setSelectedCustomer(selectedCustomer);
+    const customerChangeHandler = customer => {
+        if (customer === selectedCustomer) {
+            return;
+        }
+        inputChangeHandler('customer', customer, true);
+        setSelectedCustomer(customer);
+        petChangeHandler(null);
     }
 
-    const petChangeHandler = selectedPet => {
-        inputChangeHandler('pet', selectedPet, true);
-        setSelectedPet(selectedPet);        
+    const petChangeHandler = pet => {
+        if (pet === selectedPet) {
+            return;
+        }
+        inputChangeHandler('pet', pet, true);
+        setSelectedPet(pet);
     }
 
-    const submitHandler = useCallback(async () => {
-        console.log("formState", formState);
+    const servicesChangeHandler = selectedServicesIdList => {
+        let totalAmount = 0;
+        const selectedServices = services.filter(service => {
+            if (selectedServicesIdList.includes(service.uniqueKey)) {
+                totalAmount = totalAmount + service.price;
+                return true;
+            }
+        });
+        inputChangeHandler('services', selectedServices, true);
+        setSelectedServices(selectedServices);
+        setPrice(totalAmount);
+    }
+
+    const submitHandler = useCallback(async () => {        
         if (!formState.formIsValid) {
             Alert.alert('Wrong input!', 'Please check the errors in the form.', [{ text: 'Okay' }]);
             return;
@@ -86,20 +115,20 @@ const EditAppointmentScreen = props => {
                     appointmentsActions.updateAppointment(
                         appointmentId,
                         formState.inputValues.startTime,
-                        formState.inputValues.endTime,
                         formState.inputValues.customer,
-                        150,
-                        []
+                        formState.inputValues.pet,
+                        price,
+                        formState.inputValues.services,
                     )
                 );
             } else {
                 await dispatch(
                     appointmentsActions.createAppointment(
                         formState.inputValues.startTime,
-                        formState.inputValues.endTime,
                         formState.inputValues.customer,
-                        150,
-                        []
+                        formState.inputValues.pet,
+                        price,
+                        formState.inputValues.services
                     )
                 );
             }
@@ -124,6 +153,11 @@ const EditAppointmentScreen = props => {
         },
         [dispatchFormState]
     );
+
+    const startTimeChangeHandler = time => {
+        inputChangeHandler('startTime', time, true);
+        setStartTime(time);
+    }
 
 
     useEffect(() => {
@@ -164,34 +198,26 @@ const EditAppointmentScreen = props => {
                         color={Colors.primary}
                     />
                 </View>
+                <View style={styles.selectorButton}>
+                    <DateTimeButtons
+                        date={startTime ? startTime : null}
+                        onChange={startTimeChangeHandler}
+                    />
+                </View>
 
-                <Input
-                    id="startTime"
-                    label="Start Time"
-                    errorText="Please enter a valid start time!"
-                    keyboardType="default"
-                    autoCapitalize="sentences"
-                    autoCorrect
-                    returnKeyType="next"
-                    onInputChange={inputChangeHandler}
-                    initialValue={editedAppointment ? editedAppointment.startTime : ''}
-                    initiallyValid={!!editedAppointment}
-                    required
-                />
-
-                <Input
-                    id="endTime"
-                    label="End Time"
-                    errorText="Please enter a valid end time!"
-                    keyboardType="default"
-                    autoCapitalize="sentences"
-                    autoCorrect
-                    returnKeyType="next"
-                    onInputChange={inputChangeHandler}
-                    initialValue={editedAppointment ? editedAppointment.endTime : ''}
-                    initiallyValid={!!editedAppointment}
-                    required
-                />
+                <View style={styles.selectorButton}>
+                    <ServicesSelectorButton
+                        servicesSelectHandler={servicesChangeHandler}
+                        color={Colors.primary}
+                        title={'Add services'}
+                        selectedServices={selectedServices}
+                    />
+                </View>
+                {price ?
+                    <View>
+                        <Text style={styles.totalAmount}>Total: ${price.toFixed(2)}</Text>
+                    </View> : null
+                }
             </View>
         </KeyboardAvoidingView>
     )
@@ -225,8 +251,11 @@ const styles = StyleSheet.create({
     },
     selectorButton: {
         marginBottom: 10
-
-    }
+    },
+    totalAmount: {
+        fontFamily: 'open-sans-bold',
+        fontSize: 25
+    },
 
 });
 

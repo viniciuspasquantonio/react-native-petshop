@@ -6,6 +6,8 @@ import ordersReducer from './reducers/orders';
 import appointmentsReducer from './reducers/appointments';
 import customersReducer from './reducers/customers';
 import agendasReducer from './reducers/agendas';
+import servicesReducer from './reducers/services';
+
 
 const rootReducer = combineReducers({
     products: productsReducer,
@@ -13,7 +15,8 @@ const rootReducer = combineReducers({
     orders: ordersReducer,
     appointments: appointmentsReducer,
     agendas: agendasReducer,
-    customers: customersReducer
+    customers: customersReducer,
+    services: servicesReducer
   });
 
 const store = createStore(rootReducer,applyMiddleware(ReduxThunk));

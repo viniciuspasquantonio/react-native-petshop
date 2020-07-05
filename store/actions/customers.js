@@ -25,9 +25,7 @@ export const fetchCustomers = userId => {
 };
 
 export const fetchCustomerPets = customerId => {
-
-    return async (dispatch) => {
-        
+    return async (dispatch) => {        
         try {
             const response = await fetch(`http://10.0.2.2:8080/customers/${customerId}/pets`);
             if (!response.ok) {

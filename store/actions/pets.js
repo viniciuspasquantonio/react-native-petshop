@@ -21,7 +21,7 @@ export const deletePet = petId => {
     };
 };
 
-export const createPet = (customer, name, petType, gender) => {
+export const createPet = (customer, name, petType, gender,size) => {
     return async dispatch => {        
         const response = await fetch(
             'http://10.0.2.2:8080/pets',
@@ -33,18 +33,16 @@ export const createPet = (customer, name, petType, gender) => {
                 body: JSON.stringify(
                     {
                         name,
-                        petType: {
-                            id: petType
-                        },                        
+                        petType,                        
                         customer,
-                        gender
+                        gender,
+                        size
                     }
                 )
             }
         );
 
-        const resData = await response.json();
-
+        const resData = await response.json();        
         if (!response.ok) {
             throw new Error('Something went wrong!');
         }
@@ -53,8 +51,9 @@ export const createPet = (customer, name, petType, gender) => {
             resData.id,                
             resData.customer,
             resData.name,
-            ''+resData.petType,
-            resData.gender
+            resData.petType,
+            resData.gender,
+            resData.size
         );
         
         dispatch({
@@ -70,7 +69,7 @@ export const createPet = (customer, name, petType, gender) => {
     }
 };
 
-export const updatePet = (id, customer, name, petType, gender) => {
+export const updatePet = (id, customer, name, petType, gender,size) => {
     return async (dispatch) => {
         const response = await fetch(
             `http://10.0.2.2:8080/pets/${id}`,
@@ -83,7 +82,8 @@ export const updatePet = (id, customer, name, petType, gender) => {
                     name,
                     petType,
                     customer,
-                    gender
+                    gender,
+                    size
                 })
             });
 
@@ -97,7 +97,8 @@ export const updatePet = (id, customer, name, petType, gender) => {
                 name,
                 petType,
                 customer,
-                gender
+                gender,
+                size
             }
         });
     };

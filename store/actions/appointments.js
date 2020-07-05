@@ -25,8 +25,9 @@ export const fetchAppointments = () => {
                     entry.startTime,
                     entry.endTime,
                     entry.customer,
+                    entry.pet,
                     entry.price,
-                    entry.appointmentServices
+                    entry.services
                 ));
             }
 
@@ -58,7 +59,7 @@ export const deleteAppointment = appointmentId => {
     };
 };
 
-export const createAppointment = (startTime, endTime, customer, price, appointmentServices) => {
+export const createAppointment = (startTime, customer, pet,price, services) => {
     return async dispatch => {
 
         const response = await fetch(
@@ -70,12 +71,12 @@ export const createAppointment = (startTime, endTime, customer, price, appointme
                 },
                 body: JSON.stringify(
                     {
-                        startTime,
-                        endTime,
+                        startTime,                        
                         price,
-                        appointmentServices,
+                        services,
                         user: { id: 29 },
-                        customer
+                        customer,
+                        pet
                     }
                 )
             }
@@ -87,18 +88,18 @@ export const createAppointment = (startTime, endTime, customer, price, appointme
             type: CREATE_APPOINTMENT,
             appointmentData: {
                 id: resData.id,
-                startTime,
-                endTime,
+                startTime,                
                 price,
-                appointmentServices,
+                services,
                 userId: 29,
-                customer 
+                customer,
+                pet 
             }
         });
     }
 };
 
-export const updateAppointment = (id, startTime, endTime, customer, price, appointmentServices) => {
+export const updateAppointment = (id, startTime, customer,pet, price, services) => {
     return async (dispatch) => {
         const response = await fetch(
             `http://10.0.2.2:8080/appointments/${id}`,
@@ -108,12 +109,12 @@ export const updateAppointment = (id, startTime, endTime, customer, price, appoi
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
-                    startTime,
-                    endTime,
+                    startTime,                    
                     price,
                     user: { id: 29 },
                     customer,
-                    appointmentServices
+                    services,
+                    pet
                 })
             });
 
@@ -127,9 +128,10 @@ export const updateAppointment = (id, startTime, endTime, customer, price, appoi
                 startTime,
                 endTime,
                 price,
-                appointmentServices,
+                services,
                 userId: 29,
-                customer
+                customer,
+                pet
             }
         });
     };

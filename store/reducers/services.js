@@ -1,17 +1,17 @@
-import { SET_AGENDA } from '../actions/agendas';
+import { SET_SERVICES } from '../actions/services';
 
 const initialState = {
-    userAgenda: {},
+    userServices: [],
     userId: 29
 };
 
+
 export default (state = initialState, action) => {
     switch (action.type) {
-        case SET_AGENDA:            
+        case SET_SERVICES:
             return {
-                userAgenda: action.agenda
+                userServices: action.services
             };
-
     }
     return state;
 };

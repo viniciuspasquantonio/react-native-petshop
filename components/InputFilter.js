@@ -11,51 +11,74 @@ const InputFiler = props => {
     if (Platform.OS === 'android' && Platform.Version >= 21) {
         TouchableCmp = TouchableNativeFeedback;
     }
-    const itemSelectHandler = item => {
+    const itemSelectHandler = item => {        
         props.itemSelectHandler(item);
     }
     const filteredList = props.listToFiler.filter(createFilter(searchTerm, props.keysToFilter));
-    
+
     return (
-        <View>
+        <View style={styles.container}>
             {props.listToFiler.length > 0 ?
                 (
                     <SearchInput
                         onChangeText={(term) => { setSearchTerm(term) }}
                         style={styles.searchInput}
                         placeholder={props.placeHolder}
+                        inputFocus={true}
                     />
                 ) : (
-                    props.emptyListComponent                    
+                    props.emptyListComponent
                 )
             }
             {searchTerm.length < props.minSearchTermLenth ? null : (
-                <ScrollView>
+                <ScrollView style={styles.scrollView}>
                     {filteredList.map(item => {
                         return (
-                            <TouchableCmp onPress={() => { itemSelectHandler(item) }} key={item.id}>
-                                <View>
-                                    <Text>{item.displayName}</Text>
+                            <TouchableOpacity
+                                onPress={() => { itemSelectHandler(item) }}
+                                style={styles.touchableCmp}
+                                key={item.id}
+                            >
+                                <View style={styles.details}>
+                                    <Text style={styles.title}>{item.displayName}</Text>
                                 </View>
-                            </TouchableCmp>
+                            </TouchableOpacity>
                         )
                     })}
                 </ScrollView>
+
             )}
         </View>
     );
 };
 const styles = StyleSheet.create({
     container: {
-        flex: 1,
+
         backgroundColor: '#fff',
         justifyContent: 'flex-start'
+
     },
     searchInput: {
-        padding: 10,
         borderColor: '#CCC',
-        borderWidth: 1
-    }
+        borderWidth: 1,
+        borderRadius: 5
+    },
+    scrollView: {
+        padding: 10
+    },
+    touchableCmp: {
+        borderBottomWidth: 0.5,
+        borderColor: 'rgba(0,0,0,0.3)',
+        padding: 10
+    },
+    title: {
+        fontFamily: 'open-sans-bold',
+        marginVertical: 2
+    },
+    touchable: {
+        borderRadius: 10,
+        overflow: 'hidden'
+    },
 });
 
 export default InputFiler;

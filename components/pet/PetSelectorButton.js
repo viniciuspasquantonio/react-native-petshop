@@ -11,7 +11,7 @@ const PetSelectorButton = props => {
     const [addModalVisible, setAddModalVisible] = useState(false);
     const KEYS_TO_FILTERS = ['name', 'petType'];
     const pets = props.customer ? props.customer.pets ? props.customer.pets : [] : [];
-    
+        
 
     const petSelectHandler = pet => {
         setSearchModalVisible(false);

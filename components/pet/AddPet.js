@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback, useReducer } from 'react';
-import { View, StyleSheet, KeyboardAvoidingView, ScrollView, Alert, ActivityIndicator, Text, Button } from 'react-native';
+import { View, StyleSheet, KeyboardAvoidingView, ScrollView, Alert, ActivityIndicator, Text, Button, Picker } from 'react-native';
 import { useDispatch } from 'react-redux';
 import * as petActions from '../../store/actions/pets'
 import Input from '../../components/UI/Input';
@@ -33,6 +33,9 @@ const formReducer = (state, action) => {
 const AddPet = props => {
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState();
+    const [petSize, setPetSize] = useState(0);
+    const [gender, setGender] = useState(0);
+
 
 
     const dispatch = useDispatch();
@@ -40,15 +43,17 @@ const AddPet = props => {
     const [formState, dispatchFormState] = useReducer(formReducer, {
         inputValues: {
             name: '',
-            petType: 39,
+            petType: '',
             customer: props.customer,
-            gender: 'MALE'
+            gender: gender,
+            size: petSize
         },
         inputValidities: {
             name: false,
-            petType: true,
+            petType: false,
             customer: true,
-            gender: true
+            gender: true,
+            size: true
         },
         formIsValid: false
     });
@@ -72,8 +77,9 @@ const AddPet = props => {
                 formState.inputValues.customer,
                 formState.inputValues.name,
                 formState.inputValues.petType,
-                formState.inputValues.gender)
-            )
+                formState.inputValues.gender,
+                formState.inputValues.size
+            ))
             props.onAdded(newPet);
         } catch (error) {
             setError(error.message);
@@ -98,6 +104,16 @@ const AddPet = props => {
         },
         [dispatchFormState]
     );
+
+    const petSizeChangeHandler = size => {
+        setPetSize(size);
+        inputChangeHandler('size', size, true);
+    }
+
+    const genderChangeHandler = gender => {
+        setGender(gender);
+        inputChangeHandler('gender', gender, true);
+    }
 
     if (isLoading) {
         return (
@@ -128,6 +144,7 @@ const AddPet = props => {
                         initiallyValid={false}
                         required
                     />
+
                     <Input
                         id="petType"
                         label="Type"
@@ -137,22 +154,32 @@ const AddPet = props => {
                         autoCorrect
                         returnKeyType="next"
                         onInputChange={inputChangeHandler}
-                        initialValue={'51'}
+                        initialValue={''}
                         initiallyValid={false}
                         required
                     />
-                    <Input
-                        id="gender"
-                        label="Gender"
-                        errorText="Please enter a valid gender!"
-                        keyboardType="default"
-                        autoCapitalize="sentences"
-                        autoCorrect
-                        onInputChange={inputChangeHandler}
-                        initialValue={'MALE'}
-                        initiallyValid={false}
-                        required
-                    />
+
+                    <Picker
+                        selectedValue={gender}
+                        style={{ height: 50, width: 150 }}
+                        onValueChange={(itemValue, itemIndex) => genderChangeHandler(itemValue)}
+                    >
+                        <Picker.Item label="Male" value={0} />
+                        <Picker.Item label="Female" value={1} />
+                    </Picker>
+
+                    <Picker
+                        selectedValue={petSize}
+                        style={{ height: 50, width: 150 }}
+                        onValueChange={(itemValue, itemIndex) => petSizeChangeHandler(itemValue)}
+                    >
+                        <Picker.Item label="Toy" value={0} />
+                        <Picker.Item label="Small" value={1} />
+                        <Picker.Item label="Medium" value={2} />
+                        <Picker.Item label="Large" value={3} />
+                        <Picker.Item label="Extra Large" value={4} />
+                    </Picker>
+                   
 
                     <Button
                         color={Colors.primary}

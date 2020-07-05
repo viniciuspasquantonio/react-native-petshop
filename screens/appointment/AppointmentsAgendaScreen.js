@@ -11,10 +11,9 @@ import * as appointmentsActions from '../../store/actions/appointments';
 import AppointmentItem from '../../components/agenda/AgendaItem';
 
 
-
 const AppointmentsAgendaScreen = props => {
     const userId = 29;
-    const today = new Date().toISOString().slice(0, 10);
+    const [selectedDate, setSelectedDate] = useState(new Date().toISOString().slice(0, 10));
     const [isLoading, setIsLoading] = useState(false);
     const [isRefreshing, setIsRefreshing] = useState(false);
     const [error, setError] = useState(undefined);
@@ -59,6 +58,8 @@ const AppointmentsAgendaScreen = props => {
                 title={item.title}
                 startTimeHHmm={item.startTimeHHmm}
                 endTimeHHmm={item.endTimeHHmm}
+                services={item.services}
+                pet={item.pet}
                 onPress={() => {
                     selectItemHandler(item.appointmentId);
                 }}
@@ -103,7 +104,7 @@ const AppointmentsAgendaScreen = props => {
         <Agenda
             items={agenda.days}
             loadItemsForMonth={loadItems}
-            selected={today}
+            selected={selectedDate}
             renderItem={renderItem}
             renderEmptyDate={renderEmptyDate}
             rowHasChanged={rowHasChanged}
@@ -127,6 +128,7 @@ const AppointmentsAgendaScreen = props => {
 };
 
 AppointmentsAgendaScreen.navigationOptions = navData => {
+
     return {
         headerTitle: 'Your Agenda',
         headerLeft: () => (
@@ -140,13 +142,13 @@ AppointmentsAgendaScreen.navigationOptions = navData => {
                 />
             </HeaderButtons>
         ),
-        headerRight: () => (
+        headerRight: selectedDate => (
             <HeaderButtons HeaderButtonComponent={CustomHeaderButton}>
                 <Item
                     title='Menu'
                     iconName={Platform.OS === 'android' ? 'md-add' : 'ios-create'}
                     onPress={() => {
-                        navData.navigation.navigate('EditAppointment');
+                        navData.navigation.navigate('EditAppointment')
                     }}
                 />
             </HeaderButtons>
