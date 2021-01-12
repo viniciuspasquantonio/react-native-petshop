@@ -118,7 +118,7 @@ const EditAppointmentScreen = props => {
                         formState.inputValues.customer,
                         formState.inputValues.pet,
                         price,
-                        formState.inputValues.services,
+                        formState.inputValues.services
                     )
                 );
             } else {
@@ -128,7 +128,8 @@ const EditAppointmentScreen = props => {
                         formState.inputValues.customer,
                         formState.inputValues.pet,
                         price,
-                        formState.inputValues.services
+                        formState.inputValues.services,
+                        'BOOKED'
                     )
                 );
             }
@@ -200,7 +201,7 @@ const EditAppointmentScreen = props => {
                 </View>
                 <View style={styles.selectorButton}>
                     <DateTimeButtons
-                        date={startTime ? startTime : null}
+                        date={startTime}
                         onChange={startTimeChangeHandler}
                     />
                 </View>

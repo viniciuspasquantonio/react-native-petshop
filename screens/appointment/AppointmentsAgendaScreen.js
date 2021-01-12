@@ -47,7 +47,8 @@ const AppointmentsAgendaScreen = props => {
             appointmentId: id
         });
     };
-
+   
+    
     const loadItems = () => {
         loadAgenda(userId);
     };
@@ -55,11 +56,7 @@ const AppointmentsAgendaScreen = props => {
     const renderItem = item => {
         return (
             <AppointmentItem
-                title={item.title}
-                startTimeHHmm={item.startTimeHHmm}
-                endTimeHHmm={item.endTimeHHmm}
-                services={item.services}
-                pet={item.pet}
+                item={item}
                 onPress={() => {
                     selectItemHandler(item.appointmentId);
                 }}

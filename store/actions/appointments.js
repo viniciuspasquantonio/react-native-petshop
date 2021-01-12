@@ -1,4 +1,5 @@
 import Appointment from "../../models/appointment/appointment";
+import { SET_AGENDA_ITEM } from "./agendas";
 
 export const SET_APPOINTMENTS = 'SET_APPOINTMENTS';
 export const DELETE_APPOINTMENT = 'DELETE_APPOINTMENT';
@@ -27,7 +28,8 @@ export const fetchAppointments = () => {
                     entry.customer,
                     entry.pet,
                     entry.price,
-                    entry.services
+                    entry.services,
+                    entry.status
                 ));
             }
 
@@ -59,7 +61,7 @@ export const deleteAppointment = appointmentId => {
     };
 };
 
-export const createAppointment = (startTime, customer, pet,price, services) => {
+export const createAppointment = (startTime, customer, pet,price, services,status) => {
     return async dispatch => {
 
         const response = await fetch(
@@ -76,7 +78,8 @@ export const createAppointment = (startTime, customer, pet,price, services) => {
                         services,
                         user: { id: 29 },
                         customer,
-                        pet
+                        pet,
+                        status
                     }
                 )
             }
@@ -132,6 +135,82 @@ export const updateAppointment = (id, startTime, customer,pet, price, services) 
                 userId: 29,
                 customer,
                 pet
+            }
+        });
+    };
+};
+
+export const nextAppointmentStatus = (id) => {
+    return async (dispatch) => {
+        const response = await fetch(
+            `http://10.0.2.2:8080/appointments/${id}/nextState`,
+            {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+
+        if (!response.ok) {
+            throw new Error('Something went wrong!');
+        }
+        const resData = await response.json();
+        dispatch({
+            type: UPDATE_APPOINTMENT,
+            appointmentId: id,
+            appointmentData: {                
+                status: resData.status
+            }
+        });
+    };
+};
+
+
+export const pay = (id) => {
+    return async (dispatch) => {
+        const response = await fetch(
+            `http://10.0.2.2:8080/appointments/${id}/pay`,
+            {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+
+        if (!response.ok) {
+            throw new Error('Something went wrong!');
+        }
+        const resData = await response.json();
+        dispatch({
+            type: UPDATE_APPOINTMENT,
+            appointmentId: id,
+            appointmentData: {                
+                status: resData.status
+            }
+        });
+    };
+};
+
+export const cancel = (id) => {
+    return async (dispatch) => {
+        const response = await fetch(
+            `http://10.0.2.2:8080/appointments/${id}/cancel`,
+            {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+
+        if (!response.ok) {
+            throw new Error('Something went wrong!');
+        }
+        const resData = await response.json();
+        dispatch({
+            type: UPDATE_APPOINTMENT,
+            appointmentId: id,
+            appointmentData: {                
+                status: resData.status
             }
         });
     };
