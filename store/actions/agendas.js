@@ -1,5 +1,6 @@
 export const SET_AGENDA = 'SET_AGENDA';
 export const SET_AGENDA_ITEM = 'SET_AGENDA_ITEM';
+export const DELETE_AGENDA_ITEM = 'DELETE_AGENDA_ITEM';
 
 export const fetchAgenda = userId => {
 

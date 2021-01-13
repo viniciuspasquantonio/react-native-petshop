@@ -1,5 +1,5 @@
 import Appointment from "../../models/appointment/appointment";
-import { SET_AGENDA_ITEM } from "./agendas";
+import { DELETE_AGENDA_ITEM } from "./agendas";
 
 export const SET_APPOINTMENTS = 'SET_APPOINTMENTS';
 export const DELETE_APPOINTMENT = 'DELETE_APPOINTMENT';
@@ -191,12 +191,12 @@ export const pay = (id) => {
     };
 };
 
-export const cancel = (id) => {
+export const cancel = (agendaItem) => {
     return async (dispatch) => {
         const response = await fetch(
-            `http://10.0.2.2:8080/appointments/${id}/cancel`,
+            `http://10.0.2.2:8080/appointments/${agendaItem.appointmentId}`,
             {
-                method: 'PUT',
+                method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json'
                 }
@@ -205,12 +205,15 @@ export const cancel = (id) => {
         if (!response.ok) {
             throw new Error('Something went wrong!');
         }
-        const resData = await response.json();
         dispatch({
-            type: UPDATE_APPOINTMENT,
-            appointmentId: id,
-            appointmentData: {                
-                status: resData.status
+            type: DELETE_APPOINTMENT,
+            appointmentId: id
+        });
+        dispatch({
+            type: DELETE_AGENDA_ITEM,
+            appointmentId: agendaItem.id,
+            agendaData: {                
+                day: agendaItem.day
             }
         });
     };

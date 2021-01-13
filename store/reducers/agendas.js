@@ -1,4 +1,8 @@
-import { SET_AGENDA, SET_AGENDA_ITEM } from "../actions/agendas";
+import {
+  SET_AGENDA,
+  SET_AGENDA_ITEM,
+  DELETE_AGENDA_ITEM,
+} from "../actions/agendas";
 
 const initialState = {
   userAgenda: {},
@@ -13,16 +17,27 @@ export default (state = initialState, action) => {
         userAgenda: action.agenda,
       };
     case SET_AGENDA_ITEM:
-      const agendaItemIndex = state.userAgenda.days[action.agendaItem.day].findIndex(
+      const agendaItemIndex = state.userAgenda.days[
+        action.agendaItem.day
+      ].findIndex(
         (agendaItem) =>
           agendaItem.appointmentId === action.agendaItem.appointmentId
       );
       const updatedUserAgenda = state.userAgenda;
 
-      updatedUserAgenda.days[action.agendaItem.day][agendaItemIndex] = action.agendaItem;
+      updatedUserAgenda.days[action.agendaItem.day][agendaItemIndex] =
+        action.agendaItem;
       return {
         ...state,
         userAgenda: updatedUserAgenda,
+      };
+    case DELETE_AGENDA_ITEM:
+        console.log("deu ruim, ",action);
+      return {
+        ...state,
+        userAgenda: state.userAgenda.days[action.agendaData.day].filter(
+          (appointment) => appointment.id != action.appointmentId
+        ),
       };
   }
   return state;

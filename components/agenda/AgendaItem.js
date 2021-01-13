@@ -6,6 +6,8 @@ import {
   TouchableOpacity,
   Button,
   Platform,
+  Alert,
+  View,
 } from "react-native";
 import Colors from "../../constants/Colors";
 import * as appointmentsActions from "../../store/actions/appointments";
@@ -39,10 +41,9 @@ const AgendaItem = (props) => {
   };
 
   const item = useSelector((state) =>
-    state.agendas.userAgenda.days[props.item.day]
-      .find(
-        (agendaItem) => agendaItem.appointmentId === props.item.appointmentId
-      )
+    state.agendas.userAgenda.days[props.item.day].find(
+      (agendaItem) => agendaItem.appointmentId === props.item.appointmentId
+    )
   );
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(undefined);
@@ -67,7 +68,7 @@ const AgendaItem = (props) => {
     setError(null);
     setIsLoading(true);
     try {
-      await dispatch(appointmentsActions.cancel(item.appointmentId));
+      await dispatch(appointmentsActions.cancel(item));
     } catch (err) {
       console.log("error", error);
       setError(err.message);
@@ -87,6 +88,49 @@ const AgendaItem = (props) => {
     setIsRefreshing(false);
   }, [dispatch, setIsLoading, setError]);
 
+  const nextAppointmentStatusHandler = () => {
+    console.log("item ", item);
+    Alert.alert(
+      item.nextStatusButtonText,
+      `Deseja mesmo ${item.nextStatusButtonText} ?`,
+      [
+        { text: "Não", style: "default" },
+        {
+          text: "Sim",
+          style: "destructive",
+          onPress: () => {
+            nextAppointmentStatus();
+          },
+        },
+      ]
+    );
+  };
+
+  const payHandler = () => {
+    Alert.alert("Pagar", "Marcar o agendamento como pago?", [
+      { text: "Não", style: "default" },
+      {
+        text: "Sim",
+        style: "destructive",
+        onPress: () => {
+          pay();
+        },
+      },
+    ]);
+  };
+  const cancelHandler = () => {
+    Alert.alert("Cancelar", "Deseja mesmo cancelar o agendamento?", [
+      { text: "Não", style: "default" },
+      {
+        text: "Sim",
+        style: "destructive",
+        onPress: () => {
+          cancel();
+        },
+      },
+    ]);
+  };
+
   const steps = [
     "Agendado",
     "Confirmado",
@@ -97,45 +141,65 @@ const AgendaItem = (props) => {
 
   return (
     <TouchableOpacity
-      style={[styles.item, { height: 180 }]}
+      disabled={item.step == -1 || item.step == 4}
+      style={[styles.item, { height: 220 }]}
       onPress={props.onPress}
     >
-      <Text style={styles.time}>{item.startTimeHHmm}</Text>
-      <Text style={styles.info}>{item.title}</Text>
+      {item.step == 0 && (
+        <TouchableOpacity style={styles.cancelButton} onPress={cancelHandler}>
+          <Ionicons
+            name={
+              Platform.OS === "android" ? "md-close-circle" : "ios-close-circle"
+            }
+            size={23}
+            color={Colors.cancel}
+          />
+        </TouchableOpacity>
+      )}
+
+      <Text style={styles.bold}>{item.startTimeHHmm}</Text>
+      <Text style={styles.bold}>{item.title}</Text>
       <Text style={styles.info}>
         {item.pet.displayName} - {item.services}
       </Text>
-      <StepIndicator
-        customStyles={customStyles}
-        currentPosition={item.step}
-        labels={steps}
-      />
-      <Button
-        title={"" + item.nextStatus}
-        onPress={nextAppointmentStatus}
-        color={Colors.success}
-      />
-      <TouchableOpacity onPress={cancel}>
-        <Ionicons
-          name={
-            Platform.OS === "android" ? "md-close-circle" : "ios-close-circle"
-          }
-          size={23}
-          color={Colors.cancel}
+      <View style={styles.container}>
+        <Text style={styles.price}>Valor: {item.price}</Text>
+        {item.paid ? (
+          <Text style={styles.paid}>PAGO!</Text>
+        ) : (
+          <Button title="Pagar" onPress={payHandler} color={Colors.success} />
+        )}
+      </View>
+
+      {item.step != -1 && (
+        <StepIndicator
+          customStyles={customStyles}
+          currentPosition={item.step}
+          labels={steps}
         />
-      </TouchableOpacity>
-      <TouchableOpacity onPress={pay}>
-        <Ionicons
-          name={Platform.OS === "android" ? "md-cash" : "ios-cash"}
-          size={23}
+      )}
+      {item.step != -1 && item.step != 4 && (
+        <Button
+          title={"" + item.nextStatusButtonText}
+          onPress={nextAppointmentStatusHandler}
           color={Colors.success}
         />
-      </TouchableOpacity>
+      )}
     </TouchableOpacity>
   );
 };
 
 const styles = StyleSheet.create({
+  cancelButton: {
+    position: "absolute",
+    left: 0,
+    right: 0,
+    top: 0,
+    bottom: 0,
+    flex: 1,
+    justifyContent: "flex-end",
+    flexDirection: "row",
+  },
   item: {
     backgroundColor: "white",
     flex: 1,
@@ -144,11 +208,23 @@ const styles = StyleSheet.create({
     marginRight: 10,
     marginTop: 17,
   },
-  time: {
+  price: {
+    fontFamily: "open-sans-bold",
+    paddingRight: 10,
+  },
+  bold: {
     fontFamily: "open-sans-bold",
   },
   info: {
     fontFamily: "open-sans",
+  },
+  paid: {
+    fontFamily: "open-sans",
+    color: Colors.success,
+  },
+  container: {
+    justifyContent: "flex-start",
+    flexDirection: "row",
   },
 });
 
