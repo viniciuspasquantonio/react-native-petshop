@@ -23,13 +23,12 @@ const CustomerSelectorButton = props => {
         fetchCustomers();
     }, [fetchCustomers]);
 
-    const customers = useSelector(state => state.customers);
+    const customers = useSelector(state => state.customers.customers);
 
     const customerSelectHandler = customer => {
         setCustomerSearchModalVisible(false);
         props.customerSelectHandler(customer);
     }
-
     return (
         <View>
             <Button

@@ -61,7 +61,7 @@ const CustomersOverviewScreen = props => {
     }, [loadCustomers]);
 
     const selectCustomerHandler = (id) => {
-        props.navigation.navigate('CustomerDetail', {
+        props.navigation.navigate('EditCustomer', {
             customerId: id
         });
     };
@@ -99,7 +99,7 @@ const CustomersOverviewScreen = props => {
             onRefresh={loadCustomers}
             refreshing={isRefreshing}
             data={customers}
-            keyExtractor={item => item.id}
+            keyExtractor={item => item.id.toString()}
             renderItem={itemData => (
                 <CustomerPreview
                     customer={itemData.item}

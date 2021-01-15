@@ -28,7 +28,6 @@ const CustomerPreview = (props) => {
                 {customer.firstName} {customer.lastName} - {customer.phone}
               </Text>
             </View>
-            <View style={styles.actions}>{props.children}</View>
             <View style={styles.deleteButton}>
               <TouchableOpacity onPress={props.onDelete}>
                 <Ionicons

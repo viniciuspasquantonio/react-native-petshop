@@ -54,14 +54,14 @@ const EditCustomerScreen = (props) => {
       lastName: editedCustomer ? editedCustomer.lastName : "",
       phone: editedCustomer ? editedCustomer.phone : "",
       email: editedCustomer ? editedCustomer.email : "",
-      address: editedCustomer ? editedCustomer.address : "",
+      address: editedCustomer ? editedCustomer.address : ""
     },
     inputValidities: {
       firstName: editedCustomer ? true : false,
       lastName: editedCustomer ? true : false,
       phone: editedCustomer ? true : false,
       email: editedCustomer ? true : false,
-      address: editedCustomer ? true : false,
+      address: editedCustomer ? true : false
     },
     formIsValid: editedCustomer ? true : false,
   });
@@ -174,7 +174,7 @@ const EditCustomerScreen = (props) => {
             id="phone"
             label="Celular"
             errorText="Please enter a valid phone!"
-            keyboardType="number"
+            keyboardType="numeric"
             autoCapitalize="sentences"
             autoCorrect
             returnKeyType="next"
@@ -187,7 +187,7 @@ const EditCustomerScreen = (props) => {
             id="email"
             label="Email"
             errorText="Please enter a valid email!"
-            keyboardType="default"
+            keyboardType="email-address"
             autoCapitalize="sentences"
             autoCorrect
             returnKeyType="next"

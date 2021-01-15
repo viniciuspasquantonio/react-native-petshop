@@ -45,18 +45,18 @@ export default (state = initialState, action) => {
         (customer) => customer.id === action.customerId
       );
       const updatedCustomer = new Customer(
-        action.customerData.id,
+        action.customerId,
         action.customerData.firstName,
         action.customerData.lastName,
         action.customerData.email,
         action.customerData.phone,
         action.customerData.address
       );
-      const updatedUserCustomers = [...state.userCustomers];
-      updatedUserCustomers[customerIndex] = updatedCustomer;
+      const updatedCustomers = [...state.customers];
+      updatedCustomers[customerIndex] = updatedCustomer;
       return {
         ...state,
-        customers: updatedUserCustomers,
+        customers: updatedCustomers,
       };
     case SET_CUSTOMER_PETS:
       pets = action.pets;

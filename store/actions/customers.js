@@ -18,7 +18,7 @@ export const fetchCustomers = (userId) => {
       const resData = await response.json();
       dispatch({
         type: SET_CUSTOMERS,
-        customers: resData
+        customers: resData,
       });
     } catch (err) {
       // send to custom analytics server
@@ -80,7 +80,7 @@ export const createCustomer = (firstName, lastName, phone, email, address) => {
         phone,
         user: { id: 29 },
         email,
-        address
+        address,
       }),
     });
     const resData = await response.json();
@@ -120,7 +120,7 @@ export const updateCustomer = (
         phone,
         user: { id: 29 },
         email,
-        address
+        address,
       }),
     });
 
@@ -136,7 +136,7 @@ export const updateCustomer = (
         phone,
         userId: 29,
         email,
-        address
+        address,
       },
     });
   };
