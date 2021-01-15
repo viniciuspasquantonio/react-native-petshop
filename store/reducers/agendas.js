@@ -2,6 +2,7 @@ import {
   SET_AGENDA,
   SET_AGENDA_ITEM,
   DELETE_AGENDA_ITEM,
+  SET_AVAILABLE_WINDOWS,
 } from "../actions/agendas";
 
 const initialState = {
@@ -10,7 +11,22 @@ const initialState = {
 };
 
 export default (state = initialState, action) => {
+  const updatedUserAgenda = state.userAgenda;
   switch (action.type) {
+    case SET_AVAILABLE_WINDOWS:
+      if (updatedUserAgenda.days[action.day]) {
+        updatedUserAgenda.days[action.day].push.apply(
+          updatedUserAgenda.days[action.day],
+          action.availableWindows.days[action.day]
+        );
+      } else {
+          updatedUserAgenda.days[action.day] =
+            action.availableWindows.days[action.day];
+      }
+      return {
+        ...state,
+        userAgenda: updatedUserAgenda,
+      };
     case SET_AGENDA:
       return {
         ...state,
@@ -23,8 +39,6 @@ export default (state = initialState, action) => {
         (agendaItem) =>
           agendaItem.appointmentId === action.agendaItem.appointmentId
       );
-      const updatedUserAgenda = state.userAgenda;
-
       updatedUserAgenda.days[action.agendaItem.day][agendaItemIndex] =
         action.agendaItem;
       return {
@@ -32,7 +46,6 @@ export default (state = initialState, action) => {
         userAgenda: updatedUserAgenda,
       };
     case DELETE_AGENDA_ITEM:
-        console.log("deu ruim, ",action);
       return {
         ...state,
         userAgenda: state.userAgenda.days[action.agendaData.day].filter(

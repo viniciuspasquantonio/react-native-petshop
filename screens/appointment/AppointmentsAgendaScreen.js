@@ -8,32 +8,43 @@ import Colors from '../../constants/Colors';
 import * as agendasActions from '../../store/actions/agendas';
 import * as appointmentsActions from '../../store/actions/appointments';
 
-import AppointmentItem from '../../components/agenda/AgendaItem';
+import AgendaItem from '../../components/agenda/AgendaItem';
 
 
 const AppointmentsAgendaScreen = props => {
     const userId = 29;
     const [selectedDate, setSelectedDate] = useState(new Date().toISOString().slice(0, 10));
     const [isLoading, setIsLoading] = useState(false);
-    const [isRefreshing, setIsRefreshing] = useState(false);
     const [error, setError] = useState(undefined);
     const agenda = useSelector(state => state.agendas.userAgenda);
     const dispatch = useDispatch();
 
     const loadAgenda = useCallback(async () => {
         setError(null);
-        setIsRefreshing(true);
         try {
-            await dispatch(agendasActions.fetchAgenda(userId));
+            await dispatch(agendasActions.fetchAgenda(userId,selectedDate));
             await dispatch(appointmentsActions.fetchAppointments());
         } catch (err) {
             console.log("error", error);
             setError(err.message);
         }
-        setIsRefreshing(false);
+    }, [dispatch, setError,setIsLoading]);
+    
+    const loadAvailableWindowsByDay = useCallback(async day => {
+        setError(null);
+        setIsLoading(true);
+        try {
+            await dispatch(agendasActions.loadAvailableWindowsByDay(userId,day.dateString));
+        } catch (err) {
+            console.log("error", error);
+            setError(err.message);
+        }
+        setIsLoading(false);
     }, [dispatch, setIsLoading, setError]);
 
-
+    const onDayChangeHandler = day => {
+        setSelectedDate(day.dateString);
+    }
 
     useEffect(() => {
         const willFocusSub = props.navigation.addListener('willFocus', loadAgenda);
@@ -55,7 +66,7 @@ const AppointmentsAgendaScreen = props => {
 
     const renderItem = item => {
         return (
-            <AppointmentItem
+            <AgendaItem
                 item={item}
                 onPress={() => {
                     selectItemHandler(item.appointmentId);
@@ -106,6 +117,8 @@ const AppointmentsAgendaScreen = props => {
             renderEmptyDate={renderEmptyDate}
             rowHasChanged={rowHasChanged}
             renderEmptyData={() => { return (<View />); }}
+            onDayPress={onDayChangeHandler}
+            onDayChange={onDayChangeHandler}
         // markingType={'period'}
         // markedDates={{
         //    '2017-05-08': {textColor: '#43515c'},

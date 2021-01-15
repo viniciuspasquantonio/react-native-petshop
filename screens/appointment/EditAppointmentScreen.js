@@ -157,6 +157,7 @@ const EditAppointmentScreen = props => {
 
     const startTimeChangeHandler = time => {
         inputChangeHandler('startTime', time, true);
+        console.log("time ",time);
         setStartTime(time);
     }
 

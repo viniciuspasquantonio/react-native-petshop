@@ -58,7 +58,7 @@ const DateTimeButtons = (props) => {
   };
 
   const showDatepicker = () => {
-    if(!date){
+    if (!date) {
       setDate(new Date());
     }
     showMode("date");
