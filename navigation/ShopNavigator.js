@@ -22,6 +22,8 @@ import EditAppointmentScreen from '../screens/appointment/EditAppointmentScreen'
 
 
 import Colors from '../constants/Colors';
+import ServicesOverviewScreen from '../screens/services/ServicesOverviewScreen';
+import EditServiceScreen from '../screens/services/EditServiceScreen';
 
 const defaultNavOptions = {
     headerStyle: {
@@ -63,6 +65,22 @@ const CustomersNavigator = createStackNavigator({
         drawerIcon: drawerConfig => (
             <Ionicons
                 name={Platform.OS === 'android' ? 'md-contact' : 'ios-contact'}
+                size={23}
+                color={drawerConfig.tintColor}
+            />
+        )
+    },
+    defaultNavigationOptions: defaultNavOptions
+});
+
+const ServicesNavigator = createStackNavigator({
+    ServicesOverview: ServicesOverviewScreen,
+    EditService: EditServiceScreen
+}, {
+    navigationOptions: {
+        drawerIcon: drawerConfig => (
+            <Ionicons
+                name={Platform.OS === 'android' ? 'md-construct' : 'ios-construct'}
                 size={23}
                 color={drawerConfig.tintColor}
             />
@@ -122,8 +140,9 @@ const AdminNavigator = createStackNavigator({
 });
 
 const ShopNavigator = createDrawerNavigator({
-    Appointments: AppointmentsNavigator,
-    Customers: CustomersNavigator,
+    Agendamentos: AppointmentsNavigator,
+    Clientes: CustomersNavigator,
+    Serviços: ServicesNavigator,
     Products: ProductsNavigator,
     Orders: OrdersNavigator,
     Admin: AdminNavigator
